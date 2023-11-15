@@ -1,0 +1,247 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    My Cases
+{% endblock %}
+
+{% block main %}
+    {% if cases %}
+    <div class="d-flex flex-column align-items-center justify-content-center">
+
+    <form  id="filter-form" action="/filter" method="post">
+        <div class="form-row justify-content-center">
+          <div class="col-auto my-1">
+            <label for="exampleFormControlInput1">Case Number</label>
+            <input type="text" class="form-control" name="case_number" placeholder="Case Number" autocomplete="off" value="">
+          </div>
+          <div class="col-md-4 my-1">
+            <label for="exampleFormControlInput1">Title</label>
+            <input type="text" class="form-control" name="title" placeholder="Title" autocomplete="off" value="">
+          </div>
+          <div class="col-sm my-1">
+            <label for="exampleFormControlInput1">Category</label>
+            <select class="form-control" placeholder="Category" name="category" value="">
+                <option selected>...</option>
+               {% for category in categories %}
+                    <option>{{ category.product }}</option>
+               {% endfor %}
+            </select>
+          </div>
+          <div class="col-sm my-1">
+            <label for="exampleFormControlInput1">Sub-Category</label>
+            <select class="form-control" placeholder="sub-category" name="sub-category" value="">
+                <option selected>...</option>
+                {% for sub_category in sub_categories %}
+                    <option>{{ sub_category.sub_type }}</option>
+                {% endfor %}
+            </select>
+          </div>
+          <div class="col-sm-1 my-1 mt-auto">
+            <button class="btn btn-dark">
+                Filter
+            </button>
+          </div>
+        </div>
+    </form>
+
+    {% if filters %}
+        <div class="d-flex flex-row justify-content-center">
+            {% for filter in filters %}
+        
+                <div class="mx-2">
+                    <button class="btn-sm">{{ filter }}</button>
+                </div>
+            
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <br><br>
+
+
+        <div class="accordion" id="accordionExample">
+            <table class="table">
+                <thead>
+                    <tr>
+                      <th scope="col">Case Number</th>
+                      <th scope="col">Title</th>
+                      <th scope="col">Category</th>
+                      <th scope="col">Sub-Category</th>
+                      <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+            {% for case in cases %}
+            <form  id="case-form2-{{ case.id }}" action="/cases" method="post">
+                    <tr>
+                      <td>{{ case.ticket_number }}</td>
+                      <td>{{ case.title }}</td>
+                      <td>{{ case.category }}</td>
+                      <td>{{ case.sub_category }}</td>
+                      <td>
+                        <button class="btn btn-dark" type="button" data-toggle="collapse" data-target="#collapse{{ case.id }}" aria-expanded="false" aria-controls="collapse{{ case.id }}">
+                           Details
+                        </button>
+                        <button id="{{ case.id }}" class="btn btn-danger ml-3" onclick="delete_item(this.id)">
+                            <strong>X</strong>
+                         </button>
+                      </td>
+                    </tr>
+                    <tr>
+                        <td colspan="5">
+                            <div id="collapse{{ case.id }}" class="collapse" aria-labelledby="heading{{ case.id }}" data-parent="#accordionExample">
+                                <div class="card-body">
+                                    <input type="hidden" name="case_id" value="{{ case.id }}" class="hiddenInputStatic">
+                                </div>
+                                <div class="card-body">
+                                    <label>Issue Description</label>
+                                    <div class="typeArea2" contenteditable="true">{{ case.issue_description }}</div>
+                                    <input type="hidden" name="issue_description" class="hiddenInput">
+                                </div>
+                                <div class="card-body">
+                                    <label>Environment</label>
+                                    <div class="typeArea2" contenteditable="true">{{ case.environmnet_assets }}</div>
+                                    <input type="hidden" name="environment" class="hiddenInput">
+                                </div>
+                                <div class="card-body">
+                                    <label>Troubleshooting</label>
+                                    <div class="typeArea2" contenteditable="true">{{ case.troubleshooting }}</div>
+                                    <input type="hidden" name="troubleshooting" class="hiddenInput">
+                                </div>
+                                <div class="card-body">
+                                    <label>Resolution</label>
+                                    <div class="typeArea2" contenteditable="true">{{ case.resolution }}</div>
+                                    <input type="hidden" name="resolution" class="hiddenInput">
+                                    <br><br>
+                                    <button type="submit" class="btn btn-primary" data-case-id="{{ case.id }}">Update</button>
+                                </div>
+                            </div>
+                      </td>
+                    </tr>
+            </form>
+            {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+        {% if filters%}
+
+        <br><br>
+        <h5> <a href="/cases">All cases</a> </h5>
+
+        {% endif %}
+
+    {% elif not cases and filters %}
+        <h3>No results!</h3>
+        <h5> <a href="/cases">Go back</a> </h5>
+    
+    {% else %}
+        <h3>No cases logged yet!</h3>
+        <h5><a href="/">Log a new case!</a> </h5>
+    {% endif %}
+
+    <script>
+
+        function delete_item(caseId) {
+
+            event.preventDefault();
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch('/delete', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ id: caseId }),
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            location.reload()
+                        } else {
+                            throw new Error('Network response was not ok');
+                        }
+                    }).then(data => {
+                        Swal.fire(
+                            'Deleted!',
+                            'Your file has been deleted.',
+                            'success'
+                        );
+                    }).catch(error => {
+                        console.log('Error: ', error);
+                    });
+                }
+            })
+        }
+
+        document.querySelectorAll('[id^="case-form2-"]').forEach(form => {
+            form.addEventListener('submit', function(event) {
+            
+                event.preventDefault();
+
+                let invalidInputFound = false;
+
+                const areas = document.querySelectorAll('.typeArea2');
+                const hiddenInputs = document.querySelectorAll('.hiddenInput');
+          
+                areas.forEach((area, index) => {
+                    
+                    let content = area.innerHTML;
+                    content = content.replace(/<div><br><\/div>/g, '\n');
+                    content = content.replace(/<div>(.*?)<\/div>/g, '$1\n');
+                    content = content.replace(/<span.*?>(.*?)<\/span>/g, '$1\n');
+                    content = content.replace(/<p.*?>(.*?)<\/p>/g, '$1\n');
+                    content = content.replace(/<br>(.*?)<br>/g, '$1\n');
+                    content = content.replace(/<br>/g, '\n');
+
+                    if (!content || !content.trim()) {
+                        
+                        invalidInputFound = true;
+                        return;
+                    }
+
+                    hiddenInputs[index].value = content;
+                });
+
+                if (invalidInputFound) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Please fill in all fields properly',
+                    });
+                    return;
+                }
+            
+                var data = new FormData(event.target);
+
+                fetch(event.target.action, {
+                    method: 'POST',
+                    body: data
+                }).then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response not OK');
+                    }
+                    else {
+                        location.reload()
+                    }
+                    return response.text();
+                }).then(data => {
+                    console.log('Form Submitted sucessfully: ', data);
+                }).catch(error => {
+                    console.log('Error: ', error);
+                });
+            });
+        });
+
+    </script>
+
+{% endblock %}

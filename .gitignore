@@ -1,0 +1,13 @@
+# Ignore files related to environment variables file
+.env
+
+# Ignore venv
+CS50-FINAL-PROJECT-venv/
+
+# Ignore pychache
+__pycache__/
+
+flask_session/
+
+instance/
+```

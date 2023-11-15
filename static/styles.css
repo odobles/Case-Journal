@@ -1,0 +1,60 @@
+/* Size for brand */
+nav .navbar-brand
+{
+    font-size: xx-large;
+}
+
+.form-group {
+    max-width: 65%;
+    margin: 0 auto;
+
+}
+
+.card {
+    text-align: left;
+}
+
+td[colspan="5"] {
+    padding: 0px;
+
+}
+
+main {
+    max-width: 70%;
+}
+
+table {
+    border: 0%;
+    
+}
+
+
+.accordion {
+    /* border: 1px solid grey; */
+    width:80%;
+
+}
+
+.typeArea {
+    border: 1px solid black;
+    padding: 10px;
+    text-align: left;
+    vertical-align: top;
+    white-space: pre-wrap;
+    font-family: Helvetica, sans-serif; 
+    font-size: 16px;
+
+}
+
+
+.typeArea2 {
+    border: 0.5px solid black;
+    padding: 10px;
+    text-align: left;
+    width: 70%;
+    margin: auto;
+    white-space: pre-wrap;
+
+}
+
+
