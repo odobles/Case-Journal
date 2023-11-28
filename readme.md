@@ -15,17 +15,17 @@ The cases.html is where they can view, update, delete and filter their existing 
 
 Finally the apology.html is a custom error page, which was similarly used on Finance pset.
 
-In my backend, the most important file is main,py because I am loading my environment variables, initilizing my flask application and creating my db.
-extensions.py is the second most important file, becasue that is where I am initializing SQL alchemy and JWT manager, which are then used in main.py.
+In my backend, the most important file is main.py because I am loading my environment variables, initilizing my flask application and creating my db.
+Then, extensions.py is the second most important file, becasue that is where I am initializing SQL alchemy and JWT manager, which are then used in main.py.
 
 Then, I got my application routes split into 2 different files: main_routes.py and auth.py,
 
 In auth.py I am handling the user login, logout and registration.
 For the register I am simply taking the parameters submitted by the user which are email, password and password confirmation.
-Then I am running several checks to ensure the doesn't exist already, the email and password aren't empty and correct.
+Then I am running several checks such as ensure the user doesn't exist already, the email and password aren't empty and correct, etc.
 In this case, I am only accepting emails for the domain of @xyz.com only, no hyphens or plus signs are accepted.
 
-Finally, if it passes all checks a new user is inserted into the db.
+Finally, if it passes all checks a new user is inserted into the db with a hashed password.
 
 The login route is making sure the username and password match an existing user in the db and not submitted as empty.
 If these checks are passed, user is redirected to the index of the page and it is given an access and refresh tokens.
